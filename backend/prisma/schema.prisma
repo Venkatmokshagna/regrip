@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownedDocuments Document[] @relation("OwnedDocuments")
+  roles          UserDocumentRole[]
+  messages       ChatMessage[]
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  title     String   @default("Untitled")
+  content   String?  @db.LongText
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner     User               @relation("OwnedDocuments", fields: [ownerId], references: [id])
+  roles     UserDocumentRole[]
+  messages  ChatMessage[]
+}
+
+enum Role {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model UserDocumentRole {
+  id         String   @id @default(uuid())
+  userId     String
+  documentId String
+  role       Role
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, documentId])
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  documentId String
+  userId     String
+  message    String?  @db.Text
+  fileUrl    String?
+  createdAt  DateTime @default(now())
+
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
