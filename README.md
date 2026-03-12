@@ -6,7 +6,7 @@ A real-time, multi-user document editor with live chat, file sharing, and Gemini
 
 | Service | URL |
 |---|---|
-| Frontend | _Deploy to Vercel — add link here_ |
+| Frontend | _Deploy to Vercel — https://frontend-phi-brown-eeffo4dhl7.vercel.app/login |
 | Backend API | _Deploy to Railway/Render — add link here_ |
 
 ---
